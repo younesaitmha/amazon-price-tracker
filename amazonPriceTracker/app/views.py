@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
 from .models import Product
 from .forms import AddProductForm
 
@@ -37,3 +39,14 @@ def home_view(request):
         'error': error,
     }
     return render(request, 'products/index.html', context)
+
+class DeleteProductView(DeleteView):
+    model = Product
+    template_name = 'products/confirm_delete.html'
+    success_url = reverse_lazy('home-view')
+
+def update_product(request):
+    queryset = Product.objects.all()
+    for product in queryset:
+        product.save()
+    return redirect('home-view')
